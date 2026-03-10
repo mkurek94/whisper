@@ -3,7 +3,11 @@ import type { NextFunction, Request, Response } from "express";
 import { User } from "../models/User";
 import { clerkClient, getAuth } from "@clerk/express";
 
-export async function getMe(req: AuthRequest, res: Response, next: NextFunction) {
+export async function getMe(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const { userId } = req;
     if (!userId) {
@@ -19,12 +23,16 @@ export async function getMe(req: AuthRequest, res: Response, next: NextFunction)
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(500)
-    next();
+    res.status(500);
+    next(error);
   }
 }
 
-export async function authCallback(req: Request, res: Response, next: NextFunction) {
+export async function authCallback(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const { userId: clerkId } = getAuth(req);
     if (!clerkId) {
@@ -45,7 +53,7 @@ export async function authCallback(req: Request, res: Response, next: NextFuncti
         email: clerkUser.emailAddresses[0]?.emailAddress,
         name: clerkUser.firstName
           ? `${clerkUser.firstName} ${clerkUser.lastName || ""}`.trim()
-          : clerkUser.emailAddresses[0]?.emailAddress.split("@")[0],
+          : clerkUser.emailAddresses[0]?.emailAddress?.split("@")[0],
         avatar: clerkUser.imageUrl,
       });
     }
@@ -53,6 +61,6 @@ export async function authCallback(req: Request, res: Response, next: NextFuncti
     res.status(200).json(user);
   } catch (error) {
     res.status(500);
-    next();
+    next(error);
   }
 }
