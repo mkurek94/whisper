@@ -6,7 +6,7 @@ import userRoutes from "./routes/userRoutes";
 
 const app = express();
 
-app.use(express.json()); //parsers incoming JSON request bodies and makse them available as req.body
+app.use(express.json()); //parsers incoming JSON request bodies and makes them available as req.body
 // in your route handlers
 
 app.get("/health", (req, res) => {
