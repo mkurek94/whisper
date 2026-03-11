@@ -6,9 +6,9 @@ import { initializeSocket } from "./src/utils/socket";
 const PORT = process.env.PORT || 3000;
 const httpServer = createServer(app);
 
-initializeSocket(httpServer);
 
 connectDB().then(() => {
+  initializeSocket(httpServer);
   httpServer.listen(PORT, () => {
     console.log("Server is up and running on PORT:" + PORT);
   });

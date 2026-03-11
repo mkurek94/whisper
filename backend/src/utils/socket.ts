@@ -5,10 +5,6 @@ import { Message } from "../models/Message";
 import { Chat } from "../models/Chat";
 import { User } from "../models/User";
 
-interface SocketWithUserId extends Socket {
-  userId: string;
-}
-
 //store online users in memory : userId -> socketId
 export const onlineUsers: Map<string, string> = new Map();
 
@@ -43,7 +39,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
         return next(new Error("User not found"));
       }
 
-      (socket as SocketWithUserId).userId = user._id.toString(); //attach userId to socket for later use
+      socket.data.userId = user._id.toString(); //attach userId to socket for later use
 
       next();
     } catch (error) {
@@ -52,7 +48,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
   });
 
   io.on("connection", (socket) => {
-    const userId = (socket as SocketWithUserId).userId;
+    const userId = socket.data.userId;
 
     //send list o currently connected users to the client
     socket.emit("online-users", { userIds: Array.from(onlineUsers.keys()) });
@@ -65,7 +61,16 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
     socket.join(`user:${userId}`);
 
-    socket.on("join-chat", (chatId) => {
+    socket.on("join-chat", async (chatId: string) => {
+      const chat = await Chat.findOne({
+        _id: chatId,
+        participants: userId,
+      });
+      if (!chat) {
+        return socket.emit("error", {
+          message: "Chat not found or access denied",
+        });
+      }
       socket.join(`chat:${chatId}`);
     });
 
@@ -101,7 +106,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
           chat.lastMessageAt = new Date();
           await chat.save();
 
-          await message.populate("sender", "name email avatar");
+          await message.populate("sender", "name avatar");
 
           io.to(`chat:${chatId}`).emit("new-message", message);
 
