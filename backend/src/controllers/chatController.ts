@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import type { AuthRequest } from "../middleware/auth";
 import { Chat } from "../models/Chat";
+import { User } from "../models/User";
 
 export async function getChats(
   req: AuthRequest,
@@ -45,6 +46,18 @@ export async function getOrCreateChat(
     const userId = req.userId;
     const participantId = req.params.participantId;
 
+    if (userId === participantId) {
+      return res
+        .status(400)
+        .json({ message: "Cannot create chat with yourself" });
+    }
+
+    const participantExists = await User.exists({ _id: participantId });
+    
+    if (!participantExists) {
+      return res.status(404).json({ message: "Participant not found" });
+    }
+
     let chat = await Chat.findOne({
       participants: { $all: [userId, participantId] },
     })
@@ -63,14 +76,13 @@ export async function getOrCreateChat(
       (p) => p._id.toString() !== userId,
     );
 
-    res.json({ 
+    res.json({
       _id: chat._id,
       participant: otherParticipant ?? null,
       lastMessage: chat.lastMessage,
       lastMessageAt: chat.lastMessageAt,
       createdAt: chat.createdAt,
-     });
-
+    });
   } catch (error) {
     res.status(500);
     next(error);
