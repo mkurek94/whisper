@@ -39,10 +39,13 @@ app.use("/api/users", userRoutes);
 
 // serve frontend in production
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../../web/dist")));
+  const distPath = "/app/web/dist";
+  console.log("Static path:", distPath);
   
+  app.use(express.static(distPath));
+   
   app.get("/{*any}", (_, res) => {
-    res.sendFile(path.join(__dirname, "../../web/dist/index.html"));
+    res.sendFile(path.join(distPath, "index.html"));
   });
 }
 
