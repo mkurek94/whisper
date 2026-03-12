@@ -6,8 +6,12 @@ import messageRoutes from "./routes/messageRoutes";
 import userRoutes from "./routes/userRoutes";
 import { clerkMiddleware } from "@clerk/express";
 import { errorHandler } from "./middleware/errorHandler";
+import { fileURLToPath } from "bun";
 
 const app = express();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use(express.json()); //parsers incoming JSON request bodies and makes them available as req.body
 // in your route handlers
@@ -27,10 +31,13 @@ app.use("/api/users", userRoutes);
 app.use(errorHandler);
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../../web/dist")));
+  // Sprawdź dokładnie tę ścieżkę - na Renderze rootem jest zazwyczaj główny folder repozytorium
+  const distPath = path.join(__dirname, "../../web/dist");
+  
+  app.use(express.static(distPath));
 
-  app.get("/{*any}", (_, res) => {
-    res.sendFile(path.join(__dirname, "../../web/dist/index.html"));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(distPath, "index.html"));
   });
 }
 
