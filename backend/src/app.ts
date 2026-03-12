@@ -1,6 +1,5 @@
 import express from "express";
 import path from "path";
-import { existsSync, readdirSync } from "fs";
 import authRoutes from "./routes/authRoutes";
 import chatRoutes from "./routes/chatRoutes";
 import messageRoutes from "./routes/messageRoutes";
@@ -28,22 +27,8 @@ app.use("/api/chats", chatRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
 
-//error handling middleware should be the last middleware added to the stack, after all routes and other middleware, have been defined. This ensures that it can catch and handle any errors that occur during the processing of requests, regardless of where they originate in the application.
-app.use(errorHandler);
-
 if (process.env.NODE_ENV === "production") {
-  const distPath = process.env.NODE_ENV === "production" 
-    ? "/app/web/dist" 
-    : path.join(__dirname, "../../web/dist");
-  
-  console.log("Serving static files from:", distPath);
-  console.log("NODE_ENV:", process.env.NODE_ENV);
-  console.log("__dirname:", __dirname);
-  
-  console.log("distPath exists:", existsSync(distPath));
-  if (existsSync(distPath)) {
-    console.log("distPath contents:", readdirSync(distPath));
-  }
+  const distPath = "/app/web/dist";
   
   app.use(express.static(distPath));
 
@@ -51,5 +36,7 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.join(distPath, "index.html"));
   });
 }
+
+app.use(errorHandler);
 
 export default app;
