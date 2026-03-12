@@ -31,8 +31,11 @@ app.use("/api/users", userRoutes);
 app.use(errorHandler);
 
 if (process.env.NODE_ENV === "production") {
-  // Sprawdź dokładnie tę ścieżkę - na Renderze rootem jest zazwyczaj główny folder repozytorium
-  const distPath = path.join(__dirname, "../../web/dist");
+  const distPath = process.env.NODE_ENV === "production" 
+    ? "/app/web/dist" 
+    : path.join(__dirname, "../../web/dist");
+  
+  console.log("Serving static files from:", distPath);
   
   app.use(express.static(distPath));
 
