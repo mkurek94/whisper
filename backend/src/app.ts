@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import { existsSync, readdirSync } from "fs";
 import authRoutes from "./routes/authRoutes";
 import chatRoutes from "./routes/chatRoutes";
 import messageRoutes from "./routes/messageRoutes";
@@ -36,6 +37,13 @@ if (process.env.NODE_ENV === "production") {
     : path.join(__dirname, "../../web/dist");
   
   console.log("Serving static files from:", distPath);
+  console.log("NODE_ENV:", process.env.NODE_ENV);
+  console.log("__dirname:", __dirname);
+  
+  console.log("distPath exists:", existsSync(distPath));
+  if (existsSync(distPath)) {
+    console.log("distPath contents:", readdirSync(distPath));
+  }
   
   app.use(express.static(distPath));
 
