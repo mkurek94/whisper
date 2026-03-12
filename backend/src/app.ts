@@ -1,21 +1,31 @@
 import express from "express";
 import path from "path";
+import cors from "cors";
+
+import { clerkMiddleware } from "@clerk/express";
+
 import authRoutes from "./routes/authRoutes";
 import chatRoutes from "./routes/chatRoutes";
 import messageRoutes from "./routes/messageRoutes";
 import userRoutes from "./routes/userRoutes";
-import { clerkMiddleware } from "@clerk/express";
 import { errorHandler } from "./middleware/errorHandler";
-import { fileURLToPath } from "bun";
 
 const app = express();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const allowedOrigins = [
+  "http://localhost:8081", // expo mobile
+  "http://localhost:5173", // vite web devs
+  process.env.FRONTEND_URL!, // production
+].filter(Boolean);
 
-app.use(express.json()); //parsers incoming JSON request bodies and makes them available as req.body
-// in your route handlers
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true, // allow credentials from client (cookies, authorization headers, etc.)
+  })
+);
 
+app.use(express.json()); // parses incoming JSON request bodies and makes them available as req.body in your route handlers
 app.use(clerkMiddleware());
 
 app.get("/health", (req, res) => {
@@ -27,16 +37,16 @@ app.use("/api/chats", chatRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
 
+// serve frontend in production
 if (process.env.NODE_ENV === "production") {
-  const distPath = "/app/web/dist";
+  app.use(express.static(path.join(__dirname, "../../web/dist")));
   
-  app.use(express.static(distPath));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(distPath, "index.html"));
+  app.get("/{*any}", (_, res) => {
+    res.sendFile(path.join(__dirname, "../../web/dist/index.html"));
   });
 }
 
+// error handlers must come after all the routes and other middlewares so they can catch errors passed with next(err) or thrown inside async handlers.
 app.use(errorHandler);
 
 export default app;
