@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import authRoutes from "./routes/authRoutes";
 import chatRoutes from "./routes/chatRoutes";
 import messageRoutes from "./routes/messageRoutes";
@@ -24,5 +25,12 @@ app.use("/api/users", userRoutes);
 
 //error handling middleware should be the last middleware added to the stack, after all routes and other middleware, have been defined. This ensures that it can catch and handle any errors that occur during the processing of requests, regardless of where they originate in the application.
 app.use(errorHandler);
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../../web/dist")));
+  app.get("/{*any}", (_req, res) => {
+    res.sendFile(path.join(__dirname, "../../web/dist/index.html"));
+  });
+}
 
 export default app;
