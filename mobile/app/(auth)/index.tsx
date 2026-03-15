@@ -5,10 +5,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useSocialAuth } from "@/hooks/useSocialAuth";
 
-const { width, height } = Dimensions.get("window");
 
 const AuthScreen = () => {
   const { handleSocialAuth, loadingStrategy } = useSocialAuth();
+  const { width, height } = Dimensions.get("window");
+  const isLoading = loadingStrategy !== null;
   return (
     <View className="flex-1 bg-surface-dark">
       <Text>AuthScreen</Text>
@@ -41,8 +42,10 @@ const AuthScreen = () => {
 
           <View className="flex-row gap-4 mt-10">
             <Pressable
-              disabled={loadingStrategy === "oauth_google"}
-              onPress={() => handleSocialAuth("oauth_google")}
+              disabled={isLoading}
+              accessibilityRole="button"
+              accessibilityLabel="Continue with Google"
+              onPress={() => !isLoading && handleSocialAuth("oauth_google")}
               className="flex-1 flex-row items-center justify-center gap-2 bg-white/95 py-4 rounded-2xl active:scale-[0.97]"
             >
               <Image
@@ -55,8 +58,10 @@ const AuthScreen = () => {
               </Text>
             </Pressable>
             <Pressable
-              disabled={loadingStrategy === "oauth_apple"}
-              onPress={() => handleSocialAuth("oauth_apple")}
+               disabled={isLoading}
+              accessibilityRole="button"
+              accessibilityLabel="Continue with Apple"
+              onPress={() => !isLoading && handleSocialAuth("oauth_apple")}
               className="flex-1 flex-row items-center justify-center gap-2 bg-white/10 py-4 rounded-2xl active:scale-[0.97]"
             >
               <Ionicons name="logo-apple" size={20} color="#FFFFFF" />

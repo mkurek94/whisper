@@ -7,6 +7,7 @@ export const useSocialAuth = () => {
   const [loadingStrategy, setLoadingStrategy] = useState<string | null>(null);
 
   const handleSocialAuth = async (strategy: "oauth_google" | "oauth_apple") => {
+    if (loadingStrategy) return;
     setLoadingStrategy(strategy);
 
     try {
@@ -14,9 +15,16 @@ export const useSocialAuth = () => {
         strategy,
       });
 
-      if (createdSessionId && setActive) {
-        setActive({ session: createdSessionId, redirectUrl: "/(tabs)" });
+      if (!createdSessionId || !setActive) {
+        const provider = strategy === "oauth_google" ? "Google" : "Apple";
+        Alert.alert(
+          "Sign-in incomplete",
+          `${provider} sign-in did not complete. Please try again.`,
+        );
+        return;
       }
+
+      await setActive({ session: createdSessionId, redirectUrl: "/(tabs)" });
     } catch (error) {
       console.log("Error in social auth:", error);
       Alert.alert(
