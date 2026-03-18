@@ -4,7 +4,9 @@ import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useSocialAuth } from "@/hooks/useSocialAuth";
-
+import { LinearGradient } from "expo-linear-gradient";
+import { AnimatedOrb } from "@/components/AnimatedOrb";
+import {BlurView} from "expo-blur";
 
 const AuthScreen = () => {
   const { handleSocialAuth, loadingStrategy } = useSocialAuth();
@@ -12,8 +14,51 @@ const AuthScreen = () => {
   const isLoading = loadingStrategy !== null;
   return (
     <View className="flex-1 bg-surface-dark">
-      <Text>AuthScreen</Text>
-      <View className="absolute inset-0 overflow-hidden"></View>
+      <View className="absolute inset-0 overflow-hidden">
+        <LinearGradient
+          colors={["#0D0D0F", "#1a1a2E", "#16213E", "#0D0D0F"]}
+          style={{ position: "absolute", width: "100%", height: "100%" }}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        />
+        <AnimatedOrb
+          colors={["#F4A261", "#E76F51"]}
+          size={300}
+          initialX={-80}
+          initialY={height * 0.1}
+          duration={4000}
+        />
+
+        <AnimatedOrb
+          colors={["#E76F51", "#F4A261"]}
+          size={250}
+          initialX={width - 100}
+          initialY={height * 0.3}
+          duration={5000}
+        />
+
+        <AnimatedOrb
+          colors={["#FFD7BA", "#F4A261"]}
+          size={200}
+          initialX={width * 0.3}
+          initialY={height * 0.6}
+          duration={3500}
+        />
+
+        <AnimatedOrb
+          colors={["#F4B183", "#E76F51"]}
+          size={180}
+          initialX={-50}
+          initialY={height * 0.75}
+          duration={4500}
+        />
+
+        <BlurView
+          intensity={70}
+          tint="dark"
+          style={{ position: "absolute", width: "100%", height: "100%" }}
+        />
+      </View>
       <SafeAreaView className="flex-1">
         <View className="items-center pt-10">
           <Image
@@ -58,7 +103,7 @@ const AuthScreen = () => {
               </Text>
             </Pressable>
             <Pressable
-               disabled={isLoading}
+              disabled={isLoading}
               accessibilityRole="button"
               accessibilityLabel="Continue with Apple"
               onPress={() => !isLoading && handleSocialAuth("oauth_apple")}
