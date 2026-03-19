@@ -6,10 +6,10 @@ import { tokenCache } from "@clerk/expo/token-cache";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AuthSync from "@/components/AuthSync";
 import { StatusBar } from "expo-status-bar";
-import * as Sentry from '@sentry/react-native';
+import * as Sentry from "@sentry/react-native";
 
 Sentry.init({
-  dsn: 'https://586a512bc6d398d6024d956266b0eee3@o4511059454984192.ingest.de.sentry.io/4511059460423760',
+  dsn: "https://586a512bc6d398d6024d956266b0eee3@o4511059454984192.ingest.de.sentry.io/4511059460423760",
 
   // Adds more context data to events (IP address, cookies, user, etc.)
   // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
@@ -21,12 +21,13 @@ Sentry.init({
   // Configure Session Replay
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1,
-  integrations: [Sentry.mobileReplayIntegration(),
+  integrations: [
+    Sentry.mobileReplayIntegration(),
     Sentry.reactNativeTracingIntegration({
       traceFetch: true,
       traceXHR: true,
-      enableHTTPTimings: true
-    })
+      enableHTTPTimings: true,
+    }),
   ],
 
   // uncomment the line below to enable Spotlight (https://spotlightjs.com)
@@ -55,6 +56,14 @@ export default Sentry.wrap(function RootLayout() {
         >
           <Stack.Screen name="(auth)" options={{ animation: "fade" }} />
           <Stack.Screen name="(tabs)" options={{ animation: "fade" }} />
+          <Stack.Screen
+            name="new-chat"
+            options={{
+              animation: "slide_from_bottom",
+              presentation: "modal",
+              gestureEnabled: true,
+            }}
+          />
         </Stack>
       </QueryClientProvider>
     </ClerkProvider>
