@@ -12,8 +12,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useUsers } from "@/hooks/useUsers";
 import { useGetOrCreateChat } from "@/hooks/useChats";
-import { User } from "@sentry/react";
 import UserItem from "@/components/UserItem";
+import { User } from "@/types";
 
 const NewChat = () => {
   const router = useRouter();
@@ -72,7 +72,7 @@ const NewChat = () => {
                 New Chat
               </Text>
               <Text className="text-muted-foreground text-xs mt-0.5">
-                Search for a user to start chagging
+                Search for a user to start chatting
               </Text>
             </View>
           </View>
