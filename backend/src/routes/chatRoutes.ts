@@ -7,6 +7,6 @@ const router = Router();
 router.use(protectRoute);
 
 router.get("/", getChats);
-router.post("/with/:participantId", getOrCreateChat);
+router.post("/:participantId", getOrCreateChat);
 
 export default router;
