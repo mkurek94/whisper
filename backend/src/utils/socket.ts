@@ -120,7 +120,27 @@ export const initializeSocket = (httpServer: HttpServer) => {
       },
     );
 
-    socket.on("typing", async (data) => {});
+    socket.on("typing", async (data: { chatId: string; isTyping: boolean }) => {
+      const typingPayload = {
+        userId,
+        chatId: data.chatId,
+        isTyping: data.isTyping,
+      };
+
+      socket.to(`chat:${data.chatId}`).emit("typing", typingPayload);
+
+      try{
+        const chat = await Chat.findById(data.chatId);
+        if(chat) {
+          const otherPartipicantId = chat.participants.find(p => p.toString() !== userId);
+          if(otherPartipicantId) {
+            socket.to(`user:${otherPartipicantId}`).emit("typing", typingPayload)
+          }
+        }
+      } catch (error) {
+        // silently fail - typing indicator is not critical
+      }
+    });
 
     socket.on("disconnect", () => {
       onlineUsers.delete(userId);
