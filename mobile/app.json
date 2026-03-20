@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "mobile",
-    "slug": "mobile",
+    "slug": "whispertest",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -20,7 +20,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.mobile"
+      "package": "com.mkurek.whispertest"
     },
     "web": {
       "output": "static",
@@ -50,11 +50,19 @@
           "project": "whisper-app",
           "organization": "golden-projects"
         }
-      ]
+      ],
+      "@sentry/react-native"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "c96322a0-59de-4840-ae77-4500b707f66e"
+      }
+    },
+    "owner": "golden-apps-organization"
   }
 }
