@@ -14,11 +14,13 @@ import { useUsers } from "@/hooks/useUsers";
 import { useGetOrCreateChat } from "@/hooks/useChats";
 import UserItem from "@/components/UserItem";
 import { User } from "@/types";
+import { useSocketStore } from "@/lib/socket";
 
 const NewChat = () => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = React.useState("");
   const { data: allUsers, isLoading } = useUsers();
+  const { onlineUsers } = useSocketStore();
 
   const { mutate: getOrCreateChat, isPending: isCreatingChat } =
     useGetOrCreateChat();
@@ -121,7 +123,7 @@ const NewChat = () => {
                   <UserItem
                     key={user._id}
                     user={user}
-                    isOnline={true}
+                    isOnline={onlineUsers.has(user._id)}
                     onPress={() => handleUserSelect(user)}
                   />
                 ))}

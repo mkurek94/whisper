@@ -25,8 +25,7 @@ export const useGetOrCreateChat = () => {
     mutationFn: async (participantId: string) => {
       const { data } = await apiWithAuth<Chat>({
         method: "POST",
-        url: "/chats",
-        data: { participantId },
+        url: `/chats/${participantId}`
       });
       return data;
     },
